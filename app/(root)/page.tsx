@@ -1,5 +1,6 @@
 import Header from '@/components/Header'
 import { SignedIn, UserButton } from '@clerk/nextjs'
+import Image from 'next/image';
 import React from 'react'
 
 const Home = () => {
@@ -21,7 +22,14 @@ const Home = () => {
 
   </div>
 ): (
-  <div>
+  <div className='document-list-empty'>
+    <Image
+      src="/assets/icons/doc.svg"
+      alt="document"
+      width={40}
+      height={40}
+      className='mx-auto'
+    />
     </div>
 )}
   
