@@ -1,14 +1,19 @@
 import AddDocumentBtn from '@/components/AddDocumentBtn';
+import { DeleteModal } from '@/components/DeleteModal';
 import Header from '@/components/Header'
+import { getDocuments } from '@/lib/actions/room.actions';
+import { getClerkUsers } from '@/lib/actions/user.actions';
+import { dateConverter } from '@/lib/utils';
 import { SignedIn, UserButton } from '@clerk/nextjs'
 import { currentUser } from '@clerk/nextjs/server';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react'
 
 const Home = async () => {
   const clerkUser = await currentUser();
 
-  const documents = [];
+  const roomDocuments = await getDocuments(getClerkUsers.emailAddresses[0].emailAddress)
   return (
     <main className='home-container'>
       <Header className='sticky left-0 top-0'>
@@ -21,9 +26,36 @@ const Home = async () => {
         </div>
       </Header>
 
-{documents.length > 0 ? (
-  <div>
-
+{roomDocuments.data.length > 0 ? (
+  <div className='document-list-container'>
+    <div className='document-list-title'>
+      <h3 className='text-28-semibold'>All Documents</h3>
+        <AddDocumentBtn
+          userId={clerkUser.id}
+          email={clerkUser.emailAddresses[0].emailAddress}
+        />
+    </div>
+    <ul className="document-ul">
+            {roomDocuments.data.map(({ id, metadata, createdAt }: any) => (
+              <li key={id} className="document-list-item">
+                <Link href={`/documents/${id}`} className="flex flex-1 items-center gap-4">
+                  <div className="hidden rounded-md bg-dark-500 p-2 sm:block">
+                    <Image 
+                      src="/assets/icons/doc.svg"
+                      alt="file"
+                      width={40}
+                      height={40}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="line-clamp-1 text-lg">{metadata.title}</p>
+                    <p className="text-sm font-light text-blue-100">Created about {dateConverter(createdAt)}</p>
+                  </div>
+                </Link>
+                <DeleteModal roomId={id} />
+              </li>
+            ))}
+          </ul>
   </div>
 ): (
   <div className='document-list-empty'>
