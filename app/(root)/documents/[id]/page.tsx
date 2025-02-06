@@ -19,12 +19,14 @@ const Document = async ({ params }: SearchParamProps) => {
   const userIds = Object.keys(room.usersAccesses);
   const users = await getClerkUsers({ userIds });
 
-  const usersData = users.map((user: User) => ({
+  const usersData = users.filter((user): user is User => user !== null).map((user) => ({
     ...user,
     userType: room.usersAccesses[user.email]?.includes('room:write')
       ? 'editor'
       : 'viewer'
-  }))
+  }));
+  
+  
 
   const currentUserType = room.usersAccesses[clerkUser.emailAddresses[0].emailAddress]?.includes('room:write') ? 'editor' : 'viewer';
 
