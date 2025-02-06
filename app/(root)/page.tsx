@@ -10,6 +10,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
+interface RoomDocument {
+  id: string;
+  metadata: string;
+  createdAt: string;
+}
+
+
 const Home = async () => {
   const clerkUser = await currentUser();
   if(!clerkUser) redirect('/sign-in');
@@ -37,7 +44,7 @@ const Home = async () => {
             />
           </div>
           <ul className="document-ul">
-            {roomDocuments.data.map(({ id, metadata, createdAt }: any) => (
+            {roomDocuments.data.map(({ id, metadata, createdAt }: RoomDocument)
               <li key={id} className="document-list-item">
                 <Link href={`/documents/${id}`} className="flex flex-1 items-center gap-4">
                   <div className="hidden rounded-md bg-dark-500 p-2 sm:block">
